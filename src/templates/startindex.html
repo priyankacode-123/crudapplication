@@ -1,0 +1,10 @@
+{% include "header.html" %}
+{% block content %}
+
+<h3>Upload the csv file to Mysql Database</h3>
+
+<form method = "post" action="" enctype="multipart/form-data">
+  <input type="file" id="myFile" name="filename" class="btn btn-success pull-left" data-toggle="modal" data-target="#mymodal">
+  <input type="submit" class="btn btn-primary" >
+</form>
+{% endblock %}

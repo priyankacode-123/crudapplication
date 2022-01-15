@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+{% include "header.html" %}
+ <div class="modal-body">
+
+
+            <form action='' method="POST">
+
+
+               <div class="form-group">
+
+
+                  <label>ID:</label>
+                   <input type="hidden"  name="id" value="{{row.0}}">
+
+
+
+               </div>
+
+
+
+               <div class="form-group">
+
+
+                  <label>Symbol:</label>
+
+                  <input type="text" class="form-control" name="symbol" value="{{row.1}}">
+
+
+               </div>
+
+
+               <div class="form-group">
+
+
+                  <label>Name:</label>
+
+                  <input type="text" class="form-control" name="name" value="{{row.2}}">
+
+
+               </div>
+
+
+               <div class="form-group">
+
+
+                  <button class="btn btn-primary" type="submit">Update</button>
+
+
+               </div>
+
+
+            </form>
+ </div>
