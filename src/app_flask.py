@@ -2,11 +2,12 @@
 The script created an CRUD Application using FLASK framework
 Author - Priyanka Sirohiya
 """
+import logging
 from MySQLdb import IntegrityError, ProgrammingError, Error
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mysqldb import MySQL
 from call_csv import csv_to_db
-import logging
+
 
 logging.basicConfig(filename='logging_crud.log', level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s', filemode='w')
@@ -17,10 +18,11 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '1234'
 app.config['MYSQL_DB'] = 'crypto'
+app.config['TESTING'] = True
 UPLOAD_FOLDER = 'data'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-mysql = MySQL(app)
+mysql1 = MySQL(app)
 
 
 # Root URL
@@ -46,9 +48,8 @@ def uploadfiles():
     if uploaded_file.filename != '':
         csv_to_db(uploaded_file)
         return render_template('success.html')
-    else:
-        logging.info("No file uploaded")
-        return render_template('startindex.html')
+    logging.info("No file uploaded")
+    return render_template('startindex.html')
 
 
 @app.route("/viewdata")
@@ -58,15 +59,17 @@ def index():
     :return: renders index page
     """
     try:
-        cur = mysql.connection.cursor()
+        cur = mysql1.connection.cursor()
         cur.execute("SELECT  * FROM cry")
         cry = cur.fetchall()
         cur.close()
         return render_template('index.html', cry=cry)
     except PermissionError as per_err:
         logging.error('%s: %s', per_err.__class__.__name__, per_err)
+        return per_err
     except TypeError as type_err:
         logging.error('%s: %s', type_err.__class__.__name__, type_err)
+        return type_err
 
 
 @app.route('/update', methods=['GET', 'POST'])
@@ -75,27 +78,27 @@ def update():
     function to perform the update operation referring the key attribute "id"
     :return:  For POST: index page
     """
-    try:
-        if request.method == 'POST':
-            id = request.form['id']
+    if request.method == 'POST':
+        try:
+            crypto_id = request.form['id']
             symbol = request.form['symbol']
             name = request.form['name']
-            cur = mysql.connection.cursor()
+            cur = mysql1.connection.cursor()
             cur.execute("""
                    UPDATE cry
                    SET symbol=%s, name=%s
                    WHERE id=%s
-                """, (symbol, name, id))
+                """, (symbol, name, crypto_id))
             flash("Data Updated Successfully")
-            mysql.connection.commit()
-            return redirect(url_for('index'))
-    except PermissionError as per_err:
-        logging.error('%s: %s', per_err.__class__.__name__, per_err)
-    except TypeError as type_err:
-        logging.error('%s: %s', type_err.__class__.__name__, type_err)
+            mysql1.connection.commit()
+        except PermissionError as per_err:
+            logging.error('%s: %s', per_err.__class__.__name__, per_err)
+        except TypeError as type_err:
+            logging.error('%s: %s', type_err.__class__.__name__, type_err)
+    return redirect(url_for('index'))
 
 
-@app.route('/delete/<string:id_data>', methods=['GET','POST'])
+@app.route('/delete/<string:id_data>', methods=['GET', 'POST'])
 def delete(id_data):
     """
     delete the respective row from database with its corresponding id
@@ -104,14 +107,17 @@ def delete(id_data):
     """
     try:
         flash("Record Has Been Deleted Successfully")
-        cur = mysql.connection.cursor()
+        cur = mysql1.connection.cursor()
         cur.execute("DELETE FROM cry WHERE id=%s", (id_data,))
-        mysql.connection.commit()
+        mysql1.connection.commit()
         return redirect(url_for('index'))
     except PermissionError as per_err:
         logging.error('%s: %s', per_err.__class__.__name__, per_err)
+        return per_err
     except TypeError as type_err:
         logging.error('%s: %s', type_err.__class__.__name__, type_err)
+        return type_err
+
 
 @app.route('/insert')
 def add_view():
@@ -123,8 +129,10 @@ def add_view():
         return render_template('insert.html')
     except PermissionError as per_err:
         logging.error('%s: %s', per_err.__class__.__name__, per_err)
+        return per_err
     except TypeError as type_err:
         logging.error('%s: %s', type_err.__class__.__name__, type_err)
+        return type_err
 
 
 @app.route('/insert', methods=['POST', 'GET'])
@@ -133,28 +141,32 @@ def insert():
     insert the value in database
     :return: POST: renders index page
     """
-    try:
-        if request.method == "POST":
-            id = request.form['id']
+
+    if request.method == "POST":
+        try:
+            crypto_id = request.form['id']
             symbol = request.form['symbol']
             name = request.form['name']
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO cry (id,symbol, name) VALUES (%s, %s, %s)", (id, symbol, name))
+            cur = mysql1.connection.cursor()
+            cur.execute("INSERT INTO cry (id,symbol, name) "
+                        "VALUES (%s, %s, %s)", (crypto_id, symbol, name))
             flash("Data Inserted Successfully")
-            mysql.connection.commit()
+            mysql1.connection.commit()
+
+        except IntegrityError as in_err:
+            logging.info("Integrity Error raised")
+            logging.error('%s: %s', in_err.__class__.__name__, in_err)
+            flash("Data already exists")
             return redirect(url_for('index'))
-    except IntegrityError as in_err:
-        logging.info("Integrity Error raised")
-        logging.error('%s: %s', in_err.__class__.__name__, in_err)
-        raise
-    except ProgrammingError as db_err:
-        logging.info("Programming Error raised")
-        logging.error('%s: %s', db_err.__class__.__name__, db_err)
-        raise
-    except Error as err:
-        logging.error('%s: %s', err.__class__.__name__, err)
-        raise
+        except ProgrammingError as db_err:
+            logging.info("Programming Error raised")
+            logging.error('%s: %s', db_err.__class__.__name__, db_err)
+        except Error as err:
+            logging.error('%s: %s', err.__class__.__name__, err)
+        else:
+            return redirect(url_for('index'))
+    return render_template("insert.html")
 
 
 if __name__ == "__main__":
-    app.run(host="localhost")
+    app.run(host="localhost", debug=True)

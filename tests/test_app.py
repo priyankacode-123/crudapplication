@@ -1,5 +1,5 @@
 import unittest
-from src.App import app
+from src.app_flask import app
 from src.call_csv import csv_to_db
 
 

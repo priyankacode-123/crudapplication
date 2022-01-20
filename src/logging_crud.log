@@ -1,24 +1,5 @@
-2022-01-15 17:18:32,490:INFO:You're connected to database: ('crypto',)
-2022-01-15 17:18:32,497:INFO:Creating table....
-2022-01-15 17:18:32,511:INFO:Table is created....
-2022-01-15 17:18:32,640:INFO:Integrity Error raised
-2022-01-15 17:18:32,641:ERROR:IntegrityError: (1062, "Duplicate entry 'baseball' for key 'cry.PRIMARY'")
-2022-01-15 17:18:32,641:ERROR:Exception on /insert [POST]
-Traceback (most recent call last):
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\flask\app.py", line 2073, in wsgi_app
-    response = self.full_dispatch_request()
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\flask\app.py", line 1518, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\flask\app.py", line 1516, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\flask\app.py", line 1502, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
-  File "C:\Users\HP\PycharmProjects\crudwithflask\src\App.py", line 142, in insert
-    cur.execute("INSERT INTO cry (id,symbol, name) VALUES (%s, %s, %s)", (id, symbol, name))
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\MySQLdb\cursors.py", line 206, in execute
-    res = self._query(query)
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\MySQLdb\cursors.py", line 319, in _query
-    db.query(q)
-  File "C:\Users\HP\PycharmProjects\crudwithflask\venv\lib\site-packages\MySQLdb\connections.py", line 254, in query
-    _mysql.connection.query(self, query)
-MySQLdb._exceptions.IntegrityError: (1062, "Duplicate entry 'baseball' for key 'cry.PRIMARY'")
+2022-01-19 06:38:07,593:INFO:You're connected to database: ('crypto',)
+2022-01-19 06:38:07,615:INFO:Creating table....
+2022-01-19 06:38:07,627:INFO:Table is created....
+2022-01-19 06:38:07,865:INFO:Integrity Error raised
+2022-01-19 06:38:07,866:ERROR:IntegrityError: (1062, "Duplicate entry 'baseball' for key 'cry.PRIMARY'")

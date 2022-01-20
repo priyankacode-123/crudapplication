@@ -3,7 +3,15 @@
 
 <h2>Add Data</h2>
 
+{%with messages = get_flashed_messages()%}
 
+                {%if messages%}
+
+                {% for message in messages %}
+<h3>{{message}}</h3>
+ {%endfor%}
+    {%endif%}
+    {%endwith%}
 <form action="/insert" method="POST">
 
 
@@ -29,6 +37,7 @@
                   <button class="btn btn-primary" type="submit">Insert Data</button>
                </div>
 
+
 <div class="modal-footer">
            <button type="button"  class="btn btn-success pull-right" data-toggle="modal" data-target="#mymodal">
 
@@ -36,6 +45,7 @@
                     </a></button>
  </div>
             </form>
+
 
 
 
