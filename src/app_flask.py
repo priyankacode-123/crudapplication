@@ -148,6 +148,7 @@ def insert():
             symbol = request.form['symbol']
             name = request.form['name']
             cur = mysql1.connection.cursor()
+
             cur.execute("INSERT INTO cry (id,symbol, name) "
                         "VALUES (%s, %s, %s)", (crypto_id, symbol, name))
             flash("Data Inserted Successfully")
