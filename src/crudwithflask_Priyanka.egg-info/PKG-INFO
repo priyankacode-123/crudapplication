@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: crudwithflask-Priyanka
+Version: 0.0.1
+Summary: A small application to perform CRUD operations with flask
+Home-page: https://github.com/priyankacode-123/crudapplication.git
+Author: Priyanka Sirohiya
+Author-email: priyanka.sirohiya@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/priyankacode-123/crudapplication.git
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENCE
+
+# CRUD WITH FLASK
+
+This is a simple CRUD application package while using flask framework. 
+

@@ -1,0 +1,8 @@
+LICENCE
+README.md
+pyproject.toml
+setup.cfg
+src/crudwithflask_Priyanka.egg-info/PKG-INFO
+src/crudwithflask_Priyanka.egg-info/SOURCES.txt
+src/crudwithflask_Priyanka.egg-info/dependency_links.txt
+src/crudwithflask_Priyanka.egg-info/top_level.txt
