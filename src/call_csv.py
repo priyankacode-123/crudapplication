@@ -1,19 +1,30 @@
 import pandas as pd
 import logging
 from mysql.connector import connect, errors
+import boto3
 
 logging.basicConfig(filename='logging_crud.log', level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s', filemode='w')
 
 CREATE_TABLE_QUERY = """
                         CREATE TABLE cry(id varchar(200) primary key not null, symbol varchar(250),name varchar(500))
-                     """
+                    """
+s3 = boto3.client('s3')
+
+
+def put_json_to_s3(filename):
+    with open(filename, 'rb') as file:
+        s3.put_object(Bucket='demo-priyanka-bucket', Key=filename, Body=file.read())
+
 
 def csv_to_db(file_name):
     """The function reads a file that was uploaded by the user to the server.
         : param - csv file uploaded by the user."""
 
     data_frame = pd.read_csv(file_name, index_col=False, delimiter=',')
+    data_frame.to_json('cry.json', orient='records')
+    put_json_to_s3('cry.json')
+
     try:
         conn = connect(host='localhost',
                        database="crypto",
@@ -37,6 +48,3 @@ def csv_to_db(file_name):
         logging.error('%s: %s', prmg_err.__class__.__name__, prmg_err)
     except errors.Error as err_e:
         logging.error('%s: %s', err_e.__class__.__name__, err_e)
-
-
-

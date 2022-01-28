@@ -2,12 +2,12 @@
 The script created an CRUD Application using FLASK framework
 Author - Priyanka Sirohiya
 """
+import json
 import logging
 from MySQLdb import IntegrityError, ProgrammingError, Error
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mysqldb import MySQL
-from call_csv import csv_to_db
-
+from call_csv import csv_to_db, put_json_to_s3
 
 logging.basicConfig(filename='logging_crud.log', level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s', filemode='w')
@@ -91,6 +91,15 @@ def update():
                 """, (symbol, name, crypto_id))
             flash("Data Updated Successfully")
             mysql1.connection.commit()
+            with open("cry.json", "r") as json_file:
+                data = json.load(json_file)
+            for i in data:
+                if i["id"] == str(crypto_id):
+                    i["symbol"] = symbol
+                    i["name"] = name
+            with open("cry.json", "w") as json_file:
+                json_file.write(json.dumps(data))
+            put_json_to_s3("cry.json")
         except PermissionError as per_err:
             logging.error('%s: %s', per_err.__class__.__name__, per_err)
         except TypeError as type_err:
@@ -110,6 +119,13 @@ def delete(id_data):
         cur = mysql1.connection.cursor()
         cur.execute("DELETE FROM cry WHERE id=%s", (id_data,))
         mysql1.connection.commit()
+        with open("cry.json", "r") as json_file:
+            data = json.load(json_file)
+            data = [i for i in data if not (i["id"] == str(id_data))]
+        with open("cry.json", "w") as json_file:
+            json.dump(data, json_file)
+        put_json_to_s3("cry.json")
+
         return redirect(url_for('index'))
     except PermissionError as per_err:
         logging.error('%s: %s', per_err.__class__.__name__, per_err)
@@ -153,6 +169,13 @@ def insert():
                         "VALUES (%s, %s, %s)", (crypto_id, symbol, name))
             flash("Data Inserted Successfully")
             mysql1.connection.commit()
+            entry = {'id': crypto_id, 'symbol': symbol, 'name': name}
+            with open("cry.json", "r") as json_file:
+                data = json.load(json_file)
+            data.append(entry)
+            with open("cry.json", "w") as json_file:
+                json.dump(data, json_file)
+            put_json_to_s3("cry.json")
 
         except IntegrityError as in_err:
             logging.info("Integrity Error raised")
